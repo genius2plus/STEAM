@@ -243,17 +243,22 @@ const SpeechReader = {
 
 // 機器人控制遊戲核心
 const RobotGame = {
-  // 5x5 地圖定義 (0: 空地, 1: 障礙物🌲, 2: 終點旗子🏁)
+  // 10x10 地圖定義 (0: 空地, 1: 障礙物🌲, 2: 終點旗子🏁)
   map: [
-    [0, 0, 0, 0, 2],
-    [0, 1, 1, 0, 0],
-    [0, 0, 0, 1, 0],
-    [1, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0]
+    [0, 0, 0, 1, 0, 0, 0, 0, 0, 2],
+    [0, 1, 0, 1, 0, 1, 1, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 1, 1, 0],
+    [0, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+    [1, 1, 1, 1, 0, 0, 0, 0, 1, 0],
+    [0, 0, 0, 1, 1, 1, 1, 0, 1, 0],
+    [0, 1, 0, 0, 0, 0, 1, 0, 0, 0],
+    [0, 1, 1, 1, 1, 0, 1, 1, 1, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0] // 機器人起點在 (0, 9) 即左下角
   ],
   robot: {
     x: 0,
-    y: 4,
+    y: 9,
     dir: 'up'
   },
   commands: [],
@@ -265,7 +270,7 @@ const RobotGame = {
 
   resetGame() {
     this.robot.x = 0;
-    this.robot.y = 4;
+    this.robot.y = 9;
     this.robot.dir = 'up';
     this.commands = [];
     this.running = false;
@@ -315,8 +320,8 @@ const RobotGame = {
     const grid = document.getElementById('robot-grid');
     grid.innerHTML = '';
     
-    for (let r = 0; r < 5; r++) {
-      for (let c = 0; c < 5; c++) {
+    for (let r = 0; r < 10; r++) {
+      for (let c = 0; c < 10; c++) {
         const cell = document.createElement('div');
         cell.className = 'map-cell';
         
@@ -375,7 +380,7 @@ const RobotGame = {
         else if (this.robot.dir === 'down') nextY++;
         else if (this.robot.dir === 'left') nextX--;
 
-        if (nextX < 0 || nextX >= 5 || nextY < 0 || nextY >= 5 || this.map[nextY][nextX] === 1) {
+        if (nextX < 0 || nextX >= 10 || nextY < 0 || nextY >= 10 || this.map[nextY][nextX] === 1) {
           AudioPlayer.playFail();
           const gridWrapper = document.querySelector('.game-map-wrapper');
           gridWrapper.style.animation = 'none';
