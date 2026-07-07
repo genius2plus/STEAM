@@ -120,14 +120,32 @@ const SpeechReader = {
     const chunkText = this.speechQueue[this.queueIndex];
     this.currentUtterance = new SpeechSynthesisUtterance(chunkText);
     
-    // 設置台灣/中文語音
+    // 設置台灣/中文語音（優先選擇高品質的線上神經網路自然語音 Neural/Online/Natural）
     const voices = window.speechSynthesis.getVoices();
-    const twVoice = voices.find(v => v.lang.includes('zh-TW')) || 
-                    voices.find(v => v.lang.includes('zh-HK')) || 
-                    voices.find(v => v.lang.includes('zh-CN')) || 
-                    voices.find(v => v.lang.includes('zh'));
-    if (twVoice) {
-      this.currentUtterance.voice = twVoice;
+    
+    // 篩選所有中文語音 (台灣優先，其次香港、大陸)
+    const chineseVoices = voices.filter(v => 
+      v.lang.includes('zh-TW') || v.lang.includes('zh-HK') || v.lang.includes('zh-CN')
+    );
+
+    // 優先排序：包含 'Natural' > 'Online' > 'Neural' > 'Google' > 其他
+    chineseVoices.sort((a, b) => {
+      const getScore = (voice) => {
+        let score = 0;
+        const name = voice.name.toLowerCase();
+        if (voice.lang.includes('zh-TW')) score += 100; // 台灣腔優先
+        if (name.includes('natural')) score += 50;
+        if (name.includes('online')) score += 40;
+        if (name.includes('neural')) score += 30;
+        if (name.includes('google')) score += 20;
+        return score;
+      };
+      return getScore(b) - getScore(a);
+    });
+
+    const bestVoice = chineseVoices[0];
+    if (bestVoice) {
+      this.currentUtterance.voice = bestVoice;
     }
 
     // 優化語速（0.82 較為緩慢清楚，適合 2-3 年級）
