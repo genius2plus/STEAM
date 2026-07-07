@@ -60,11 +60,11 @@ header p {
 
 /* 遊戲主容器 */
 .game-container {
-  max-width: 1250px;
+  max-width: 1550px;
   margin: 0 auto;
   padding: 0.5rem 1rem 1.5rem 1rem;
   display: grid;
-  grid-template-columns: 520px 1fr;
+  grid-template-columns: 980px 1fr;
   gap: 2.5rem;
   align-items: stretch;
 }
@@ -96,10 +96,10 @@ header p {
   box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.6);
 }
 
-/* 8x8 地圖，格數適應小螢幕：55px */
+/* 8x16 地圖，格數適應小螢幕：55px */
 .game-map {
   display: grid;
-  grid-template-columns: repeat(8, 55px);
+  grid-template-columns: repeat(16, 55px);
   grid-template-rows: repeat(8, 55px);
   gap: 4px;
   background: #334155;
