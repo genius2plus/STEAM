@@ -60,11 +60,11 @@ header p {
 
 /* 遊戲主容器 */
 .game-container {
-  max-width: 1350px;
+  max-width: 1550px;
   margin: auto;
   padding: 2rem 1rem;
   display: grid;
-  grid-template-columns: 750px 1fr;
+  grid-template-columns: 720px 1fr;
   gap: 2.5rem;
   align-items: start;
 }
