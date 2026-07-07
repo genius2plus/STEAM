@@ -66,7 +66,7 @@ header p {
   display: grid;
   grid-template-columns: 720px 1fr;
   gap: 2.5rem;
-  align-items: start;
+  align-items: stretch;
 }
 
 @media (max-width: 1024px) {
@@ -279,14 +279,14 @@ header p {
 .btn-command-right:hover { transform: translateY(-2px); box-shadow: 0 7px 0 #db2777; }
 .btn-command-right:active { transform: translateY(2px); box-shadow: 0 0px 0 #db2777; }
 
-/* 動作佇列排程區 */
 .command-list {
   background: #0f172a;
   border: 3px dashed #334155;
   border-radius: 20px;
   padding: 1rem;
   min-height: 120px;
-  max-height: 160px;
+  max-height: 320px;
+  flex-grow: 1;
   overflow-y: auto;
   display: flex;
   flex-wrap: wrap;
