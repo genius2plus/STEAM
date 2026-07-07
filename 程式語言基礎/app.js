@@ -1,4 +1,4 @@
-// Web Audio API 音效播放器
+// Web Audio API 震撼音效合成器 2.0
 const AudioPlayer = {
   ctx: null,
 
@@ -8,65 +8,127 @@ const AudioPlayer = {
     }
   },
 
+  // 1. 移動指令音效：具備頻率上揚的電子嗶聲
   playBeep() {
     this.init();
     if (this.ctx.state === 'suspended') this.ctx.resume();
+    
+    const now = this.ctx.currentTime;
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
+    
     osc.connect(gain);
     gain.connect(this.ctx.destination);
 
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(800, this.ctx.currentTime);
-    gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.005, this.ctx.currentTime + 0.08);
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(600, now);
+    osc.frequency.exponentialRampToValueAtTime(1200, now + 0.08); // 快速上揚
+    
+    gain.gain.setValueAtTime(0.1, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
 
-    osc.start();
-    osc.stop(this.ctx.currentTime + 0.08);
+    osc.start(now);
+    osc.stop(now + 0.08);
   },
 
-  playSuccess() {
-    this.init();
-    if (this.ctx.state === 'suspended') this.ctx.resume();
-    const now = this.ctx.currentTime;
-    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5 -> E5 -> G5 -> C6
-    notes.forEach((freq, index) => {
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(freq, now + index * 0.09);
-      gain.gain.setValueAtTime(0.12, now + index * 0.09);
-      gain.gain.exponentialRampToValueAtTime(0.005, now + index * 0.09 + 0.18);
-
-      osc.start(now + index * 0.09);
-      osc.stop(now + index * 0.09 + 0.18);
-    });
-  },
-
+  // 2. 撞牆爆炸音效：利用白雜訊加上低通濾波器調變，模擬強烈的低音轟鳴爆炸
   playFail() {
     this.init();
     if (this.ctx.state === 'suspended') this.ctx.resume();
+
     const now = this.ctx.currentTime;
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.connect(gain);
-    gain.connect(this.ctx.destination);
+    const bufferSize = this.ctx.sampleRate * 0.55; // 0.55秒的爆炸聲
+    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const data = buffer.getChannelData(0);
 
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(260, now);
-    osc.frequency.linearRampToValueAtTime(90, now + 0.35);
-    gain.gain.setValueAtTime(0.12, now);
-    gain.gain.exponentialRampToValueAtTime(0.005, now + 0.35);
+    // 填充白雜訊
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
 
-    osc.start();
-    osc.stop(now + 0.35);
+    const noiseNode = this.ctx.createBufferSource();
+    noiseNode.buffer = buffer;
+
+    // 濾波器：控制爆炸的低沈感
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(800, now);
+    filter.frequency.exponentialRampToValueAtTime(40, now + 0.5); // 快速降低頻率，營造低音下沉衝擊
+
+    // 增益節點控制爆炸振幅包絡 (Envelope)
+    const gainNode = this.ctx.createGain();
+    gainNode.gain.setValueAtTime(0.3, now);
+    gainNode.gain.linearRampToValueAtTime(0.15, now + 0.1);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+    noiseNode.connect(filter);
+    filter.connect(gainNode);
+    gainNode.connect(this.ctx.destination);
+
+    // 額外加上一個低頻正弦波，強化超低音轟鳴 (Sub-bass drop)
+    const subOsc = this.ctx.createOscillator();
+    const subGain = this.ctx.createGain();
+    subOsc.type = 'sine';
+    subOsc.frequency.setValueAtTime(120, now);
+    subOsc.frequency.linearRampToValueAtTime(30, now + 0.4);
+    subGain.gain.setValueAtTime(0.4, now);
+    subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+
+    subOsc.connect(subGain);
+    subGain.connect(this.ctx.destination);
+
+    // 啟動音效
+    noiseNode.start(now);
+    subOsc.start(now);
+    
+    noiseNode.stop(now + 0.55);
+    subOsc.stop(now + 0.55);
+  },
+
+  // 3. 勝利過關音效：多個振盪器疊加，播放史詩級的大三和弦上升琶音與和弦共鳴
+  playSuccess() {
+    this.init();
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+
+    const now = this.ctx.currentTime;
+    // C和弦組合音高 (C4, E4, G4, C5, E5, G5, C6)
+    const chordNotes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99, 1046.50];
+    
+    chordNotes.forEach((freq, index) => {
+      const osc = this.ctx.createOscillator();
+      const gainNode = this.ctx.createGain();
+      
+      osc.connect(gainNode);
+      gainNode.connect(this.ctx.destination);
+
+      // 使用鋸齒波與正弦波混合感 (Sawtooth + lowpass filter) 營造復古街機風
+      osc.type = 'sawtooth';
+      
+      const filter = this.ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(2000, now);
+      filter.frequency.exponentialRampToValueAtTime(600, now + 0.6);
+
+      osc.disconnect(gainNode);
+      osc.connect(filter);
+      filter.connect(gainNode);
+
+      // 每個音有些微的時間延遲，形成琶音 (Arpeggio)
+      const startTime = now + index * 0.08;
+      const duration = 0.8 - index * 0.04;
+
+      osc.frequency.setValueAtTime(freq, startTime);
+      gainNode.gain.setValueAtTime(0.0, now);
+      gainNode.gain.setValueAtTime(0.12, startTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+
+      osc.start(startTime);
+      osc.stop(startTime + duration);
+    });
   }
 };
 
-// Web Speech API 語音朗讀系統（斷句與流暢度優化）
+// Web Speech API 語音朗讀系統
 const SpeechReader = {
   currentUtterance: null,
   activeBtn: null,
@@ -77,13 +139,11 @@ const SpeechReader = {
   speak(text, button) {
     this.initVoice();
 
-    // 如果正在播放且點選同一個按鈕，則停止
     if (this.isPlaying && this.activeBtn === button) {
       this.stop();
       return;
     }
 
-    // 停止之前的播放
     this.stop();
 
     this.activeBtn = button;
@@ -91,20 +151,15 @@ const SpeechReader = {
     this.activeBtn.textContent = '⏸️';
     this.isPlaying = true;
 
-    // 清理與優化朗讀內容（口語化）
+    // 清理與優化口語朗讀
     let cleanText = text
-      .replace(/v2\.0/gi, '第二版')
-      .replace(/v3\.0/gi, '第三版')
-      .replace(/PRINT/g, ' 印出 ')
-      .replace(/GOTO/g, ' 跳轉到 ')
       .replace(/ROBOT/g, ' 機器人 ')
       .replace(/FORWARD/g, ' 前進 ')
       .replace(/TURN_LEFT/g, ' 左轉 ')
-      .replace(/10|20|30|40|50/g, (m) => m + '行 ')
       .replace(/0/g, '零')
       .replace(/1/g, '一');
 
-    // 斷句切分（逗號、句號、驚嘆號、問號、分號）
+    // 斷句切分
     this.speechQueue = cleanText.split(/[，。！；？,;!?\n]+/).map(s => s.trim()).filter(s => s.length > 0);
     this.queueIndex = 0;
 
@@ -120,20 +175,17 @@ const SpeechReader = {
     const chunkText = this.speechQueue[this.queueIndex];
     this.currentUtterance = new SpeechSynthesisUtterance(chunkText);
     
-    // 設置台灣/中文語音（優先選擇高品質的線上神經網路自然語音 Neural/Online/Natural）
+    // 設置台灣優先中文語音（優先選擇線上神經網路自然語音）
     const voices = window.speechSynthesis.getVoices();
-    
-    // 篩選所有中文語音 (台灣優先，其次香港、大陸)
     const chineseVoices = voices.filter(v => 
       v.lang.includes('zh-TW') || v.lang.includes('zh-HK') || v.lang.includes('zh-CN')
     );
 
-    // 優先排序：包含 'Natural' > 'Online' > 'Neural' > 'Google' > 其他
     chineseVoices.sort((a, b) => {
       const getScore = (voice) => {
         let score = 0;
         const name = voice.name.toLowerCase();
-        if (voice.lang.includes('zh-TW')) score += 100; // 台灣腔優先
+        if (voice.lang.includes('zh-TW')) score += 100;
         if (name.includes('natural')) score += 50;
         if (name.includes('online')) score += 40;
         if (name.includes('neural')) score += 30;
@@ -148,16 +200,14 @@ const SpeechReader = {
       this.currentUtterance.voice = bestVoice;
     }
 
-    // 語速設置（1.0 為標準正常語速）
-    this.currentUtterance.rate = 1.0;
-    this.currentUtterance.pitch = 1.05; // 稍微高亢活潑一點
+    this.currentUtterance.rate = 1.0; // 語速回復正常
+    this.currentUtterance.pitch = 1.05;
 
     this.currentUtterance.onend = () => {
       this.queueIndex++;
-      // 短暫停頓，使語音更流暢自然
       setTimeout(() => {
         this.playNextChunk();
-      }, 120);
+      }, 100);
     };
 
     this.currentUtterance.onerror = () => {
@@ -185,188 +235,15 @@ const SpeechReader = {
   },
 
   initVoice() {
-    // 確保語音列表已加載（解決某些瀏覽器非同步加載問題）
     if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
       speechSynthesis.onvoiceschanged = () => {};
     }
   }
 };
 
-// 簡報 (PPT) 控制核心
-const Presentation = {
-  currentSlide: 0,
-  slides: [],
-  dotsContainer: null,
-
-  init() {
-    this.slides = document.querySelectorAll('.slide');
-    this.dotsContainer = document.getElementById('ppt-dots');
-    
-    // 建立底部小圓點
-    this.dotsContainer.innerHTML = '';
-    this.slides.forEach((_, idx) => {
-      const dot = document.createElement('span');
-      dot.className = 'dot' + (idx === 0 ? ' active' : '');
-      dot.onclick = () => this.goToSlide(idx);
-      this.dotsContainer.appendChild(dot);
-    });
-
-    this.updateButtons();
-
-    // 監聽鍵盤左右鍵
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight') {
-        this.nextSlide();
-      } else if (e.key === 'ArrowLeft') {
-        this.prevSlide();
-      }
-    });
-  },
-
-  updateButtons() {
-    document.getElementById('btn-prev').disabled = this.currentSlide === 0;
-    document.getElementById('btn-next').disabled = this.currentSlide === this.slides.length - 1;
-    document.getElementById('page-num').textContent = `${this.currentSlide + 1} / ${this.slides.length}`;
-    
-    // 更新小圓點
-    const dots = this.dotsContainer.querySelectorAll('.dot');
-    dots.forEach((dot, idx) => {
-      dot.className = 'dot' + (idx === this.currentSlide ? ' active' : '');
-    });
-  },
-
-  goToSlide(index, direction = 'next') {
-    if (index < 0 || index >= this.slides.length || index === this.currentSlide) return;
-    
-    // 換頁時自動中斷語音
-    SpeechReader.stop();
-    AudioPlayer.playBeep();
-
-    const oldSlide = this.slides[this.currentSlide];
-    const newSlide = this.slides[index];
-
-    oldSlide.classList.remove('active');
-    
-    // 設定滑入方向
-    if (direction === 'prev') {
-      newSlide.classList.add('slide-prev');
-    } else {
-      newSlide.classList.remove('slide-prev');
-    }
-
-    newSlide.classList.add('active');
-    this.currentSlide = index;
-    this.updateButtons();
-  },
-
-  nextSlide() {
-    this.goToSlide(this.currentSlide + 1, 'next');
-  },
-
-  prevSlide() {
-    this.goToSlide(this.currentSlide - 1, 'prev');
-  }
-};
-
-// BASIC 語言模擬器
-const BasicSimulator = {
-  terminal: null,
-  presets: {
-    hello: `10 PRINT "哈囉！小朋友！"\n20 PRINT "歡迎來到程式冒險！"\n30 PRINT "電腦非常聽你的話喔！"`,
-    stars: `10 PRINT "⭐️"\n20 PRINT "⭐️ ⭐️"\n30 PRINT "⭐️ ⭐️ ⭐️"\n40 PRINT "✨ 亮晶晶的星星牆！ ✨"`,
-    loop: `10 PRINT "準備起跑！"\n20 PRINT "跑第 1 圈！"\n30 PRINT "跑第 2 圈！"\n40 PRINT "跑第 3 圈！"\n50 PRINT "到達終點！歡呼！🎉"`
-  },
-
-  init() {
-    this.terminal = document.getElementById('basic-terminal');
-    this.selectPreset('hello');
-  },
-
-  selectPreset(key) {
-    document.querySelectorAll('.demo-code-btn').forEach(btn => btn.classList.remove('active'));
-    const btn = document.getElementById(`preset-${key}`);
-    if (btn) btn.classList.add('active');
-    this.currentCode = this.presets[key];
-    this.clearTerminal();
-    this.terminal.textContent = this.currentCode + '\n\n(點選下方「執行程式」來看看結果吧！)';
-  },
-
-  clearTerminal() {
-    this.terminal.textContent = '';
-  },
-
-  run() {
-    AudioPlayer.playBeep();
-    this.clearTerminal();
-    this.terminal.textContent = 'LOADING BASIC v2.0...\nRUN\n\n';
-
-    const lines = this.currentCode.split('\n');
-    let delay = 0;
-
-    lines.forEach((line) => {
-      setTimeout(() => {
-        const printMatch = line.match(/^\d+\s+PRINT\s+"([^"]+)"/);
-        if (printMatch) {
-          this.terminal.textContent += printMatch[1] + '\n';
-        } else {
-          this.terminal.textContent += line + '\n';
-        }
-        this.terminal.scrollTop = this.terminal.scrollHeight;
-      }, delay);
-      delay += 300;
-    });
-
-    setTimeout(() => {
-      this.terminal.textContent += '\nREADY.\n■';
-      AudioPlayer.playSuccess();
-    }, delay);
-  }
-};
-
-// Scratch 銜接對照
-function showScratchBridge(mode) {
-  AudioPlayer.playBeep();
-  const basicDisplay = document.getElementById('bridge-basic');
-  const scratchDisplay = document.getElementById('bridge-scratch');
-
-  if (mode === 'print') {
-    basicDisplay.innerHTML = `<pre>10 PRINT "哈囉！"</pre>`;
-    scratchDisplay.innerHTML = `
-      <div class="scratch-block block-stack">
-        說出 [ 哈囉！ ] 2 秒
-      </div>
-    `;
-  } else if (mode === 'loop') {
-    basicDisplay.innerHTML = `<pre>10 PRINT "安安"
-20 GOTO 10</pre>`;
-    scratchDisplay.innerHTML = `
-      <div class="scratch-block block-control">
-        <div class="block-control-header">重複無限次</div>
-        <div class="block-control-body">
-          <div class="scratch-block block-stack" style="margin: 0; width: 100%;">
-            說出 [ 安安 ] 2 秒
-          </div>
-        </div>
-      </div>
-    `;
-  } else if (mode === 'robot') {
-    basicDisplay.innerHTML = `<pre>10 ROBOT.FORWARD
-20 ROBOT.TURN_LEFT</pre>`;
-    scratchDisplay.innerHTML = `
-      <div class="scratch-block block-stack">
-        移動 [ 1 ] 步
-      </div>
-      <br>
-      <div class="scratch-block block-stack" style="background: #855cd6;">
-        左轉 ↺ [ 90 ] 度
-      </div>
-    `;
-  }
-}
-
-// 機器人控制遊戲
+// 機器人控制遊戲核心
 const RobotGame = {
-  // 5x5 地圖定義 (0: 空地, 1: 障礙物🌲, 2: 終點旗子🏁, 3: 星星⭐️)
+  // 5x5 地圖定義 (0: 空地, 1: 障礙物🌲, 2: 終點旗子🏁)
   map: [
     [0, 0, 0, 0, 2],
     [0, 1, 1, 0, 0],
@@ -394,6 +271,7 @@ const RobotGame = {
     this.running = false;
     this.renderMap();
     this.renderCommands();
+    this.toggleControlButtons(false);
   },
 
   addCommand(cmd) {
@@ -415,7 +293,7 @@ const RobotGame = {
     listDiv.innerHTML = '';
     
     if (this.commands.length === 0) {
-      listDiv.innerHTML = '<span style="color: #94a3b8; font-size: 0.8rem; padding: 0.3rem;">未加入指令，請點選按鈕！</span>';
+      listDiv.innerHTML = '<span style="color: #647089; font-size: 0.95rem; padding: 0.5rem;">尚未編排指令，請按上方按鈕！</span>';
       return;
     }
 
@@ -462,9 +340,17 @@ const RobotGame = {
     }
   },
 
+  toggleControlButtons(disabled) {
+    document.querySelectorAll('.command-buttons button, .game-actions button').forEach(btn => {
+      if (btn.classList.contains('btn-reset')) return; // 重來按鈕不鎖定
+      btn.disabled = disabled;
+    });
+  },
+
   async runProgram() {
     if (this.running || this.commands.length === 0) return;
     this.running = true;
+    this.toggleControlButtons(true);
     
     for (let i = 0; i < this.commands.length; i++) {
       if (!this.running) break;
@@ -491,7 +377,13 @@ const RobotGame = {
 
         if (nextX < 0 || nextX >= 5 || nextY < 0 || nextY >= 5 || this.map[nextY][nextX] === 1) {
           AudioPlayer.playFail();
-          alert('💥 哎呀！機器人撞到牆壁或樹木了！請重新排列指令！');
+          const gridWrapper = document.querySelector('.game-map-wrapper');
+          gridWrapper.style.animation = 'none';
+          setTimeout(() => {
+            gridWrapper.style.animation = 'shake 0.3s';
+          }, 10);
+          
+          alert('💥 轟隆！！機器人撞毀了！請檢查你的路徑指令！');
           this.resetGame();
           return;
         } else {
@@ -506,22 +398,31 @@ const RobotGame = {
 
       if (this.map[this.robot.y][this.robot.x] === 2) {
         AudioPlayer.playSuccess();
-        alert('🎉 太棒了！機器人成功到達終點🏁！你真是程式小達人！');
+        alert('🎉 歐耶！！機器人成功抵達終點🏁！你是超級程式設計大師！');
         this.resetGame();
         return;
       }
     }
 
     AudioPlayer.playFail();
-    alert('🤖 指令執行完了，但機器人還沒走到終點喔，再試試看！');
+    alert('🤖 指令執行完了，但機器人還沒走到終點旗子喔，再試試看！');
     this.running = false;
+    this.toggleControlButtons(false);
   }
 };
 
+// 加上 CSS 動畫震動
+const styleElement = document.createElement('style');
+styleElement.innerHTML = `
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+`;
+document.head.appendChild(styleElement);
+
 // 頁面初始化
 window.addEventListener('DOMContentLoaded', () => {
-  Presentation.init();
-  BasicSimulator.init();
   RobotGame.init();
-  showScratchBridge('print');
 });

@@ -3,402 +3,75 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>小奇的程式大冒險 🚀 從電腦歷史到控制機器人</title>
+  <title>👾 超級機器人程式挑戰賽 👾</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Noto+Sans+TC:wght@400;500;700;900&family=Fira+Code:wght@400;500;&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <header>
-    <h1>🤖 小奇的程式大冒險 🚀</h1>
-    <p>按鍵盤 ◀️ / ▶️ 鍵也可以翻頁喔！</p>
+    <h1>👾 超級機器人程式挑戰賽 👾</h1>
+    <p>快來幫小機器人寫程式，挑戰走到終點吧！</p>
   </header>
 
-  <!-- 簡報播放區域 -->
-  <div class="deck-container">
-
-    <!-- 頁面 1：首頁 -->
-    <div class="slide active">
-      <div class="slide-header">
-        <h2 class="slide-title">🚀 程式大冒險出發！</h2>
-        <button class="speech-btn" onclick="SpeechReader.speak(document.getElementById('slide1-text').innerText, this)">📢</button>
-      </div>
-      <div class="slide-body split-layout">
-        <div class="text-content" id="slide1-text">
-          <div class="mascot-bubble">
-            <span class="mascot-icon">🤖</span>
-            <div class="mascot-text">「嗨！我是機器人小奇！歡迎來到程式冒險世界！」</div>
-          </div>
-          <p>
-            你知道我們天天在玩的手機、遊戲機還有會動的玩具，是怎麼來的嗎？
-          </p>
-          <p>
-            在這堂有趣的簡報課裡，我會帶你認識電腦的大歷史，然後學習跟電腦對話的「秘密語言」，最後你還要親自寫程式來遙控我喔！
-          </p>
-          <p>
-            <strong>準備好了嗎？點擊下方的「下一頁」按鈕出發吧！</strong>
-          </p>
-        </div>
-        <div class="visual-content">
-          <div class="illustration-card">
-            <span class="illustration-avatar">🚀</span>
-          </div>
+  <div class="game-container">
+    
+    <!-- 左側：巨型 120px 地圖板塊 -->
+    <div class="map-panel">
+      <div class="section-title">🗺️ 機器人冒險地圖</div>
+      <p style="margin: 0.2rem 0 1rem 0; color: #94a3b8; font-size: 0.9rem;">
+        目標：避開大樹 🌲，引引導機器人 🤖 安全抵達紅旗 🏁 處！
+      </p>
+      
+      <div class="game-map-wrapper">
+        <div class="game-map" id="robot-grid">
+          <!-- 這裡會動態載入 5x5 的 120px 宮格 -->
         </div>
       </div>
     </div>
 
-    <!-- 頁面 2：古老算盤 -->
-    <div class="slide">
-      <div class="slide-header">
-        <h2 class="slide-title">🧮 最古老的計算工具</h2>
-        <button class="speech-btn" onclick="SpeechReader.speak(document.getElementById('slide2-text').innerText, this)">📢</button>
-      </div>
-      <div class="slide-body split-layout">
-        <div class="text-content" id="slide2-text">
-          <div class="mascot-bubble">
-            <span class="mascot-icon">💡</span>
-            <div class="mascot-text">小奇說：「以前的人要算大數目，手算到頭都痛了呢！」</div>
-          </div>
-          <p>
-            很久很久以前，人類沒有計算機。買賣東西時，如果東西太多，大家就會在地上用小石頭排成一排來數數。
-          </p>
-          <p>
-            後來，中國發明了<strong>「算盤」</strong>。透過撥動木頭做的小珠子，就能很快地算出答案。這是最早的算數小幫手喔！
-          </p>
+    <!-- 右側：程式控制面板 -->
+    <div class="control-panel">
+      <div class="section-title">🎮 程式指令控制台</div>
+      
+      <!-- 小奇語音說明 -->
+      <div class="mascot-bubble">
+        <span class="mascot-icon">🤖</span>
+        <div class="mascot-text" id="rules-text">
+          「我是小奇！請點擊下方的『前進』、『左轉』或『右轉』按鈕來編排程式步驟。點擊『🚀 出發！』我就會開始移動。注意不要撞到樹木喔！」
         </div>
-        <div class="visual-content">
-          <div class="illustration-card">
-            <span class="illustration-avatar">🧮</span>
-          </div>
-        </div>
+        <button class="speech-btn" style="margin-left: auto;" onclick="SpeechReader.speak(document.getElementById('rules-text').innerText, this)">📢</button>
       </div>
-    </div>
 
-    <!-- 頁面 3：機械齒輪計算機 -->
-    <div class="slide">
-      <div class="slide-header">
-        <h2 class="slide-title">⚙️ 不需要電的機械計算機</h2>
-        <button class="speech-btn" onclick="SpeechReader.speak(document.getElementById('slide3-text').innerText, this)">📢</button>
-      </div>
-      <div class="slide-body split-layout">
-        <div class="text-content" id="slide3-text">
-          <div class="mascot-bubble">
-            <span class="mascot-icon">⚙️</span>
-            <div class="mascot-text">小奇說：「這些機器裡面有密密麻麻的齒輪，轉動手把就會自動算數喔！」</div>
-          </div>
-          <p>
-            大約四百年前，一位叫巴斯卡的科學家，為了幫爸爸減輕算帳的負擔，發明了<strong>「機械計算機」</strong>。
-          </p>
-          <p>
-            它沒有插頭，也不用電池！它是用黃銅齒輪咬合在一起，就像轉動發條音樂盒一樣，轉一圈就能進位。是不是超神奇的呢？
-          </p>
-        </div>
-        <div class="visual-content">
-          <div class="illustration-card">
-            <span class="illustration-avatar">⚙️</span>
-          </div>
+      <div>
+        <strong style="display: block; margin-bottom: 0.6rem; color: #cbd5e1;">1. 選擇你的程式指令：</strong>
+        <div class="command-buttons">
+          <button class="btn btn-command-forward" onclick="RobotGame.addCommand('forward')">前進 ⬆️</button>
+          <button class="btn btn-command-left" onclick="RobotGame.addCommand('left')">左轉 ↺</button>
+          <button class="btn btn-command-right" onclick="RobotGame.addCommand('right')">右轉 ↻</button>
         </div>
       </div>
-    </div>
 
-    <!-- 頁面 4：真空管大電腦 -->
-    <div class="slide">
-      <div class="slide-header">
-        <h2 class="slide-title">🏫 教室一樣大的真空管電腦</h2>
-        <button class="speech-btn" onclick="SpeechReader.speak(document.getElementById('slide4-text').innerText, this)">📢</button>
-      </div>
-      <div class="slide-body split-layout">
-        <div class="text-content" id="slide4-text">
-          <div class="mascot-bubble">
-            <span class="mascot-icon">🔥</span>
-            <div class="mascot-text">小奇說：「這台電腦跟一間教室一樣大，熱得像個烤箱！」</div>
-          </div>
-          <p>
-            到了 1946 年，世界上第一台真正的電子電腦<strong>「埃尼阿克 (ENIAC)」</strong>誕生了！
-          </p>
-          <p>
-            它用了將近兩萬個「真空管」（像大發光燈泡一樣的東西），重達 30 噸！它運作的時候，會發出很多熱量，還需要大風扇一直吹呢。
-          </p>
-        </div>
-        <div class="visual-content">
-          <div class="illustration-card">
-            <span class="illustration-avatar">🏢</span>
-          </div>
+      <div>
+        <strong style="display: block; margin-bottom: 0.6rem; color: #cbd5e1;">2. 你的程式指令排程（點選 × 可刪除）：</strong>
+        <div class="command-list" id="robot-cmd-list">
+          <!-- 指令將動態載入至此 -->
         </div>
       </div>
-    </div>
 
-    <!-- 頁面 5：微型晶片 -->
-    <div class="slide">
-      <div class="slide-header">
-        <h2 class="slide-title">🔬 比指甲還要小的魔法晶片</h2>
-        <button class="speech-btn" onclick="SpeechReader.speak(document.getElementById('slide5-text').innerText, this)">📢</button>
-      </div>
-      <div class="slide-body split-layout">
-        <div class="text-content" id="slide5-text">
-          <div class="mascot-bubble">
-            <span class="mascot-icon">🌟</span>
-            <div class="mascot-text">小奇說：「因為晶片發明了，電腦才可以塞進小巧的玩具機器人裡喔！」</div>
-          </div>
-          <p>
-            後來科學家發明了<strong>「電晶體」與「矽晶片」</strong>。他們把成千上萬的電子開關縮小，刻在比指甲還小的晶片上。
-          </p>
-          <p>
-            這讓電腦從教室那麼大，縮小到可以放進你的口袋裡，甚至塞進遙控車或掃地機器人的腦袋中！
-          </p>
-        </div>
-        <div class="visual-content">
-          <div class="illustration-card">
-            <span class="illustration-avatar">📱</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 頁面 6：二進位 0 與 1 -->
-    <div class="slide">
-      <div class="slide-header">
-        <h2 class="slide-title">🔌 電腦的悄悄話：二進位</h2>
-        <button class="speech-btn" onclick="SpeechReader.speak(document.getElementById('slide6-text').innerText, this)">📢</button>
-      </div>
-      <div class="slide-body split-layout">
-        <div class="text-content" id="slide6-text">
-          <div class="mascot-bubble">
-            <span class="mascot-icon">💡</span>
-            <div class="mascot-text">小奇說：「電腦的腦袋只有開燈 (1) 跟關燈 (0) 兩種狀態！」</div>
-          </div>
-          <p>
-            電腦雖然算數很快，但它的腦袋裡其實只有「電線」。電線只有兩種狀態：<strong>通電（1）</strong> 和 <strong>斷電（0）</strong>。
-          </p>
-          <p>
-            這就是<strong>「二進位」</strong>。電腦用一連串的 010101 來代表英文字母、圖畫還有好聽的音樂。這就是電腦的悄悄話！
-          </p>
-        </div>
-        <div class="visual-content">
-          <div class="illustration-card">
-            <span class="illustration-avatar">💡</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 頁面 7：打孔卡時代 -->
-    <div class="slide">
-      <div class="slide-header">
-        <h2 class="slide-title">📇 穿孔紙卡的秘密密碼</h2>
-        <button class="speech-btn" onclick="SpeechReader.speak(document.getElementById('slide7-text').innerText, this)">📢</button>
-      </div>
-      <div class="slide-body split-layout">
-        <div class="text-content" id="slide7-text">
-          <div class="mascot-bubble">
-            <span class="mascot-icon">🎫</span>
-            <div class="mascot-text">小奇說：「以前的程式設計師要在厚厚的紙卡上打洞，才能把程式寫好！」</div>
-          </div>
-          <p>
-            在沒有鍵盤和螢幕的年代，工程師是怎麼寫程式的呢？
-          </p>
-          <p>
-            答案是<strong>「打孔卡」</strong>！他們在紙卡上特定的位置打洞，有洞代表 1，沒洞代表 0。把一疊卡片塞進機器裡，電腦才讀得懂。要是卡片掉在地上亂掉，那就太慘了！
-          </p>
-        </div>
-        <div class="visual-content">
-          <div class="illustration-card">
-            <span class="illustration-avatar">🎫</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 頁面 8：BASIC 誕生 -->
-    <div class="slide">
-      <div class="slide-header">
-        <h2 class="slide-title">⌨️ 用打字的程式語言：BASIC</h2>
-        <button class="speech-btn" onclick="SpeechReader.speak(document.getElementById('slide8-text').innerText, this)">📢</button>
-      </div>
-      <div class="slide-body split-layout">
-        <div class="text-content" id="slide8-text">
-          <div class="mascot-bubble">
-            <span class="mascot-icon">💻</span>
-            <div class="mascot-text">小奇說：「BASIC 讓人類可以用簡單的英文字跟電腦溝通，不用再打洞了！」</div>
-          </div>
-          <p>
-            為了解決打洞太麻煩的問題，科學家在 1964 年發明了 <strong>BASIC 語言</strong>。
-          </p>
-          <p>
-            它使用簡單的英文字，比如 <code>PRINT</code>（印出來）和 <code>GOTO</code>（跳到哪裡）。
-          </p>
-          <p>
-            每一行代碼都有一個「行號」（如 10, 20），電腦會乖乖按照順序一行一行執行！
-          </p>
-        </div>
-        <div class="visual-content">
-          <div class="illustration-card">
-            <span class="illustration-avatar">⌨️</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 頁面 9：BASIC 模擬器 -->
-    <div class="slide">
-      <div class="slide-header">
-        <h2 class="slide-title">📟 BASIC 語言大冒險（模擬器）</h2>
-        <button class="speech-btn" onclick="SpeechReader.speak('現在換你當程式設計師了！請在左邊選一個你喜歡的程式，然後點選執行程式，看看復古螢幕會發生什麼事！', this)">📢</button>
-      </div>
-      <div class="slide-body">
-        <p style="margin:0 0 0.5rem 0;">請在左邊選一個你喜歡的程式，然後點選執行程式，看看復古螢幕會發生什麼事！</p>
-        
-        <div class="basic-playground">
-          <div class="code-selector">
-            <button class="demo-code-btn" id="preset-hello" onclick="BasicSimulator.selectPreset('hello')">
-              <strong>📝 範例一：打招呼</strong><br>
-              10 PRINT "哈囉！小朋友！"...
-            </button>
-            <button class="demo-code-btn" id="preset-stars" onclick="BasicSimulator.selectPreset('stars')">
-              <strong>🌟 範例二：滿天星星</strong><br>
-              10 PRINT "⭐️"...
-            </button>
-            <button class="demo-code-btn" id="preset-loop" onclick="BasicSimulator.selectPreset('loop')">
-              <strong>🏃 範例三：接力賽</strong><br>
-              10 PRINT "準備起跑！"...
-            </button>
-          </div>
-
-          <div class="terminal-window">
-            <div class="terminal-header">
-              <span>📟 VINTAGE COMPUTER MONITOR</span>
-              <span>STATUS: ONLINE</span>
-            </div>
-            <div class="terminal-body" id="basic-terminal">
-              <!-- 程式輸出結果 -->
-            </div>
-          </div>
-        </div>
-
-        <div class="terminal-controls" style="margin-top: 0.5rem;">
-          <button class="btn btn-run" onclick="BasicSimulator.run()">▶️ 執行程式</button>
-          <button class="btn btn-clear" onclick="BasicSimulator.clearTerminal()">🗑️ 清除螢幕</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 頁面 10：Scratch 介紹 -->
-    <div class="slide">
-      <div class="slide-header">
-        <h2 class="slide-title">🧩 像樂高一樣的 Scratch 積木</h2>
-        <button class="speech-btn" onclick="SpeechReader.speak(document.getElementById('slide10-text').innerText, this)">📢</button>
-      </div>
-      <div class="slide-body split-layout">
-        <div class="text-content" id="slide10-text">
-          <div class="mascot-bubble">
-            <span class="mascot-icon">🧩</span>
-            <div class="mascot-text">小奇說：「因為打字常常拼錯，所以科學家又做出了彩色拼圖一樣的程式！」</div>
-          </div>
-          <p>
-            雖然 BASIC 很有趣，但打字時如果拼錯一個字（比如 <code>PRNT</code>），電腦就會生氣看不懂！
-          </p>
-          <p>
-            於是，麻省理工學院開發了 <strong>Scratch 視覺化積木程式</strong>。
-          </p>
-          <p>
-            你不用再一個字一個字敲鍵盤，只要用滑鼠把「前進」、「重複」的彩色積木拼在一起，像疊樂高一樣，就能寫出好玩的遊戲和動畫！
-          </p>
-        </div>
-        <div class="visual-content">
-          <div class="illustration-card">
-            <span class="illustration-avatar">🧩</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 頁面 11：Scratch 與 BASIC 對照 -->
-    <div class="slide">
-      <div class="slide-header">
-        <h2 class="slide-title">↔️ 從 BASIC 變身 Scratch 積木</h2>
-        <button class="speech-btn" onclick="SpeechReader.speak('你知道打字的程式是怎麼變成積木的嗎？點選下面的按鈕，看看打字的 BASIC 程式碼在右邊會變成什麼顏色的 Scratch 積木吧！', this)">📢</button>
-      </div>
-      <div class="slide-body">
-        <p style="margin: 0 0 0.5rem 0;">點選下面的按鈕，看它們的對應關係：</p>
-
-        <div class="command-buttons" style="margin-bottom: 0.8rem;">
-          <button class="btn" style="background:#4c97ff; color:white;" onclick="showScratchBridge('print')">✨ 顯示文字</button>
-          <button class="btn" style="background:#ffab19; color:white;" onclick="showScratchBridge('loop')">🔁 重複迴圈</button>
-          <button class="btn" style="background:#855cd6; color:white;" onclick="showScratchBridge('robot')">🤖 指令控制</button>
-        </div>
-
-        <div class="scratch-bridge">
-          <div class="bridge-left">
-            <h4>⌨️ 以前打字的 BASIC 語言</h4>
-            <div class="code-block-display" id="bridge-basic">
-              <!-- BASIC code dynamic -->
-            </div>
-          </div>
-          <div class="bridge-right">
-            <h4>🧩 現在可愛的 Scratch 積木</h4>
-            <div class="code-block-display" style="background:#fff; border: 2px solid #e2e8f0;" id="bridge-scratch">
-              <!-- Scratch block dynamic -->
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 頁面 12：遙控機器人遊戲 -->
-    <div class="slide">
-      <div class="slide-header">
-        <h2 class="slide-title">🎮 遙控玩具機器人！</h2>
-        <button class="speech-btn" onclick="SpeechReader.speak('最後，我們要來挑戰當工程師囉！請幫小機器人寫程式，排列「前進」、「左轉」或「右轉」指令，避開可怕的森林大樹，安全走到終點紅旗子的地方！', this)">📢</button>
-      </div>
-      <div class="slide-body">
-        <p style="margin: 0 0 0.5rem 0;">請利用按鈕排列你的指令，指引小機器人避開樹木 🌲，成功走到終點紅旗 🏁 處！</p>
-
-        <div class="robot-game-container">
-          <div class="game-map-wrapper">
-            <div class="game-map" id="robot-grid">
-              <!-- Grid cells dynamically generated -->
-            </div>
-          </div>
-
-          <div class="game-controls">
-            <div>
-              <strong>1. 加入動作指令：</strong>
-              <div class="command-buttons" style="margin-top: 0.3rem;">
-                <button class="btn" style="background: var(--primary); color: white; padding:0.5rem 0.8rem;" onclick="RobotGame.addCommand('forward')">前進 ⬆️</button>
-                <button class="btn" style="background: #a78bfa; color: white; padding:0.5rem 0.8rem;" onclick="RobotGame.addCommand('left')">左轉 ↺</button>
-                <button class="btn" style="background: #f472b6; color: white; padding:0.5rem 0.8rem;" onclick="RobotGame.addCommand('right')">右轉 ↻</button>
-              </div>
-            </div>
-
-            <div>
-              <strong>2. 你的程式指令排程（點選 × 可刪除）：</strong>
-              <div class="command-list" id="robot-cmd-list">
-                <!-- 指令卡片 -->
-              </div>
-            </div>
-
-            <div class="game-actions">
-              <button class="btn btn-run" style="padding:0.5rem 1rem;" onclick="RobotGame.runProgram()">🚀 出發！</button>
-              <button class="btn btn-clear" style="padding:0.5rem 1rem;" onclick="RobotGame.resetGame()">↩️ 重來</button>
-            </div>
-          </div>
-        </div>
+      <div class="game-actions">
+        <button class="btn btn-run" onclick="RobotGame.runProgram()">🚀 出發！</button>
+        <button class="btn btn-reset" onclick="RobotGame.resetGame()">↩️ 重來</button>
       </div>
     </div>
 
   </div>
 
-  <!-- PPT 控制底部導覽列 -->
-  <div class="controls-bar">
-    <button class="btn-nav" id="btn-prev" onclick="Presentation.prevSlide()">◀️ 上一頁</button>
-    <div class="dots-indicator" id="ppt-dots">
-      <!-- 小圓點 -->
-    </div>
-    <span class="page-indicator" id="page-num">1 / 12</span>
-    <button class="btn-nav" id="btn-next" onclick="Presentation.nextSlide()">下一頁 ▶️</button>
-  </div>
+  <footer>
+    © 2026 超級機器人程式挑戰賽 🚀 啟發自 STEAM 教育與互動遊戲
+  </footer>
 
   <script src="app.js"></script>
 </body>
