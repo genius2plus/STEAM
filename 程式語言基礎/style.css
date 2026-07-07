@@ -61,8 +61,8 @@ header p {
 /* 遊戲主容器 */
 .game-container {
   max-width: 1250px;
-  margin: auto;
-  padding: 2rem 1rem;
+  margin: 0 auto;
+  padding: 0.5rem 1rem 1.5rem 1rem;
   display: grid;
   grid-template-columns: 520px 1fr;
   gap: 2.5rem;
