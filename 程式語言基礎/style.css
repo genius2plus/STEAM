@@ -1,0 +1,526 @@
+/* 程式語言基礎 - 可愛風與童趣科技感 CSS */
+:root {
+  --primary: #4cc9f0;
+  --secondary: #7209b7;
+  --accent-pink: #f72585;
+  --accent-orange: #f8961e;
+  --accent-green: #52b788;
+  --bg-light: #f4f7fe;
+  --text-dark: #2b2d42;
+  --card-bg: #ffffff;
+  --font-title: 'Baloo 2', 'Noto Sans TC', sans-serif;
+  --font-body: 'Noto Sans TC', sans-serif;
+  --font-code: 'Fira Code', 'Courier New', monospace;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-light);
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(76, 201, 240, 0.1) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(247, 37, 133, 0.1) 0%, transparent 40%);
+  color: var(--text-dark);
+  font-family: var(--font-body);
+  line-height: 1.6;
+}
+
+/* 頂部導航與標題 */
+header {
+  background: linear-gradient(135deg, #7209b7, #4cc9f0);
+  color: white;
+  padding: 2rem 1rem;
+  text-align: center;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  box-shadow: 0 8px 24px rgba(114, 9, 183, 0.15);
+}
+
+header h1 {
+  font-family: var(--font-title);
+  font-size: 2.5rem;
+  margin: 0;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+header p {
+  font-size: 1.1rem;
+  margin: 0.5rem 0 0 0;
+  opacity: 0.9;
+}
+
+/* 主容器 */
+.container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+/* 教學單元卡片 */
+.unit-card {
+  background: var(--card-bg);
+  border-radius: 24px;
+  padding: 2rem;
+  margin-bottom: 2.5rem;
+  border: 4px solid #e2e8f0;
+  box-shadow: 0 12px 0px #e2e8f0;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+
+.unit-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 0px #cbd5e1;
+  border-color: #cbd5e1;
+}
+
+.unit-tag {
+  display: inline-block;
+  background: var(--accent-orange);
+  color: white;
+  font-weight: bold;
+  padding: 0.4rem 1rem;
+  border-radius: 99px;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.unit-title {
+  font-family: var(--font-title);
+  font-size: 1.8rem;
+  margin-top: 0;
+  color: var(--secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* 語音按鈕 */
+.speech-btn {
+  background: #f1f5f9;
+  border: 2px solid #cbd5e1;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.speech-btn:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  transform: scale(1.1);
+}
+
+.speech-btn.playing {
+  animation: pulse-audio 1s infinite alternate;
+  background: var(--accent-pink);
+  color: white;
+  border-color: var(--accent-pink);
+}
+
+@keyframes pulse-audio {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.15); }
+}
+
+/* 卡通機器人吉祥物動畫 */
+.mascot-container {
+  display: flex;
+  align-items: center;
+  background: #eef2ff;
+  border-radius: 16px;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  border-left: 6px solid var(--primary);
+}
+
+.mascot-avatar {
+  font-size: 3rem;
+  margin-right: 1rem;
+  animation: float 2.5s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.bubble {
+  font-size: 1.05rem;
+  color: #374151;
+}
+
+/* BASIC 模擬器 */
+.basic-playground {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .basic-playground {
+    grid-template-columns: 1fr;
+  }
+}
+
+.code-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.demo-code-btn {
+  background: #fff;
+  border: 3px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-code);
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.demo-code-btn:hover {
+  border-color: var(--primary);
+  background: #f0fdfa;
+}
+
+.demo-code-btn.active {
+  border-color: var(--primary);
+  background: #e0f2fe;
+  box-shadow: 0 0 8px rgba(76, 201, 240, 0.4);
+}
+
+.terminal-window {
+  background: #0f172a;
+  border-radius: 16px;
+  border: 4px solid #334155;
+  color: #38bdf8;
+  font-family: var(--font-code);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 200px;
+  box-shadow: inset 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.terminal-header {
+  border-bottom: 2px solid #334155;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  display: flex;
+  justify-content: space-between;
+}
+
+.terminal-body {
+  flex-grow: 1;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  font-size: 1rem;
+}
+
+.terminal-controls {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.btn {
+  border: none;
+  border-radius: 12px;
+  padding: 0.6rem 1.2rem;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-title);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.btn-run {
+  background: var(--accent-green);
+  color: white;
+  box-shadow: 0 4px 0px #2d6a4f;
+}
+
+.btn-run:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0px #2d6a4f;
+}
+
+.btn-run:active {
+  transform: translateY(2px);
+  box-shadow: 0 0px 0px #2d6a4f;
+}
+
+.btn-clear {
+  background: #94a3b8;
+  color: white;
+  box-shadow: 0 4px 0px #475569;
+}
+
+.btn-clear:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0px #475569;
+}
+
+/* Scratch 銜接對照區 */
+.scratch-bridge {
+  display: flex;
+  align-items: stretch;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .scratch-bridge {
+    flex-direction: column;
+  }
+}
+
+.bridge-left, .bridge-right {
+  flex: 1;
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 1.2rem;
+  border: 2px dashed #cbd5e1;
+}
+
+.code-block-display {
+  background: #1e293b;
+  color: #f8fafc;
+  padding: 1rem;
+  border-radius: 12px;
+  font-family: var(--font-code);
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
+}
+
+/* 模擬 Scratch 積木樣式 */
+.scratch-block {
+  display: inline-flex;
+  align-items: center;
+  color: white;
+  padding: 0.6rem 1rem;
+  font-weight: bold;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.15);
+  margin: 0.3rem 0;
+}
+
+.block-hat {
+  background: #ffbf00;
+  border-radius: 16px 16px 4px 4px;
+  border-top: 6px solid #e6ac00;
+}
+
+.block-stack {
+  background: #4c97ff;
+  border-radius: 4px;
+}
+
+.block-control {
+  background: #ffab19;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0.6rem;
+}
+
+.block-control-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.block-control-body {
+  border-left: 12px solid #ffab19;
+  background: rgba(255,255,255,0.15);
+  margin-left: 0.5rem;
+  padding: 0.5rem;
+  width: calc(100% - 1.5rem);
+  border-radius: 4px;
+}
+
+/* 機器人控制遊戲 */
+.robot-game-container {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .robot-game-container {
+    flex-direction: column;
+  }
+}
+
+.game-map-wrapper {
+  background: #e2e8f0;
+  padding: 10px;
+  border-radius: 20px;
+  box-shadow: inset 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.game-map {
+  display: grid;
+  grid-template-columns: repeat(5, 60px);
+  grid-template-rows: repeat(5, 60px);
+  gap: 4px;
+  background: #94a3b8;
+}
+
+.map-cell {
+  background: #f1f5f9;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  position: relative;
+}
+
+.map-cell.obstacle {
+  background: #647089;
+  font-size: 1.5rem;
+}
+
+.map-cell.target {
+  background: #fef08a;
+  animation: pulse-star 1s infinite alternate;
+}
+
+@keyframes pulse-star {
+  0% { background: #fef08a; transform: scale(1); }
+  100% { background: #fde047; transform: scale(1.05); }
+}
+
+.robot-sprite {
+  font-size: 2.2rem;
+  transition: all 0.3s ease;
+  z-index: 10;
+  display: inline-block;
+}
+
+.robot-sprite.face-up { transform: rotate(0deg); }
+.robot-sprite.face-right { transform: rotate(90deg); }
+.robot-sprite.face-down { transform: rotate(180deg); }
+.robot-sprite.face-left { transform: rotate(270deg); }
+
+.game-controls {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.command-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.command-list {
+  background: #f8fafc;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 0.8rem;
+  min-height: 120px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-content: flex-start;
+}
+
+.command-badge {
+  background: var(--primary);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  animation: pop-in 0.15s ease-out;
+}
+
+@keyframes pop-in {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.command-badge button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0;
+  font-size: 0.9rem;
+}
+
+.game-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* 歷史時間軸樣式 */
+.timeline {
+  position: relative;
+  margin: 1.5rem 0;
+  padding-left: 2rem;
+  border-left: 4px solid var(--primary);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -2.45rem;
+  top: 0.25rem;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent-pink);
+  border: 4px solid var(--card-bg);
+  box-shadow: 0 0 0 4px var(--primary);
+}
+
+.timeline-time {
+  font-weight: bold;
+  color: var(--accent-pink);
+  font-size: 1.1rem;
+}
+
+.timeline-content {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-top: 0.3rem;
+  border: 1px solid #e2e8f0;
+}
+
+/* 音效與輔助狀態 */
+.sound-toggle-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>小奇的程式大冒險 🚀 從電腦歷史到控制機器人</title>
+  <!-- 引入可愛與科技感字型 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Noto+Sans+TC:wght@400;500;700;900&family=Fira+Code:wght@400;500;&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <h1>🤖 小奇的程式大冒險 🚀</h1>
+    <p>從古代的算盤到會動的玩具機器人，一起來玩程式吧！</p>
+  </header>
+
+  <div class="container">
+
+    <!-- 第一站：電腦的發展歷史 -->
+    <section class="unit-card" id="unit-history">
+      <span class="unit-tag">第一站</span>
+      <h2 class="unit-title">
+        🕰️ 電腦是怎麼來的？
+        <button class="speech-btn" onclick="SpeechReader.speak(document.getElementById('text-history').innerText, this)">📢</button>
+      </h2>
+      
+      <div class="mascot-container">
+        <span class="mascot-avatar">🤖</span>
+        <div class="bubble">
+          <strong>小奇說：</strong>「以前的電腦可不是拿來打電動的喔！它是為了解決超級難的數學題目才發明的。讓我們來看看它的長大過程吧！」
+        </div>
+      </div>
+
+      <div id="text-history">
+        <div class="timeline">
+          <div class="timeline-item">
+            <span class="timeline-time">很久以前：算盤與機械計算機</span>
+            <div class="timeline-content">
+              以前的人用「珠算盤」或齒輪轉動的「機械盒子」來算數字。每次要算加減法，手都快酸死了！
+            </div>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-time">1946 年：巨人般的真空管電腦</span>
+            <div class="timeline-content">
+              世界上第一台電子電腦叫做「埃尼阿克 (ENIAC)」。它超級巨大，需要一整個教室才裝得下，而且非常熱，像個大烤箱！
+            </div>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-time">現在：超神奇的微型晶片</span>
+            <div class="timeline-content">
+              現在的電腦晶片比你的指甲還要小！它們藏在手機、平板，還有你最愛的智慧玩具機器人裡面喔！
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 第二站：程式語言的演進 -->
+    <section class="unit-card" id="unit-languages">
+      <span class="unit-tag">第二站</span>
+      <h2 class="unit-title">
+        🗣️ 電腦的悄悄話：程式語言的發展
+        <button class="speech-btn" onclick="SpeechReader.speak(document.getElementById('text-languages').innerText, this)">📢</button>
+      </h2>
+
+      <div class="mascot-container">
+        <span class="mascot-avatar">💡</span>
+        <div class="bubble">
+          <strong>小奇說：</strong>「電腦其實有點笨，它只聽得懂『有電』和『沒電』（就是 0 和 1）。人類發明了好多種語言來跟它說話，我們來瞧瞧！」
+        </div>
+      </div>
+
+      <div id="text-languages">
+        <p>
+          最早的時候，工程師必須在紙卡上打孔（打孔卡），有孔是 1，沒孔是 0，電腦才能讀懂。這簡直像在解密碼，非常辛苦！
+        </p>
+        <p>
+          後來，科學家發明了像英文單字的 <strong>BASIC 語言</strong>，讓我們可以直接用打字命令電腦，比如寫 <code>PRINT "HELLO"</code>。
+        </p>
+        <p>
+          現在，為了讓小朋友更容易上手，我們有了像玩樂高積木一樣的 <strong>Scratch 語言</strong>！你只需要用滑鼠把彩色的積木黏在一起，就能指揮電腦做事囉！
+        </p>
+      </div>
+    </section>
+
+    <!-- 第三站：BASIC 語言大冒險 -->
+    <section class="unit-card" id="unit-basic">
+      <span class="unit-tag">第三站</span>
+      <h2 class="unit-title">
+        💾 BASIC 語言大冒險
+        <button class="speech-btn" onclick="SpeechReader.speak('現在換你當程式設計師了！在左邊選一個你喜歡的程式，然後點選綠色的執行程式按鈕，看右邊的復古螢幕會印出什麼悄悄話喔！', this)">📢</button>
+      </h2>
+
+      <p>現在換你當程式設計師了！在左邊選一個你喜歡的程式，然後點選執行程式，看看復古螢幕會發生什麼事！</p>
+
+      <div class="basic-playground">
+        <div class="code-selector">
+          <button class="demo-code-btn" id="preset-hello" onclick="BasicSimulator.selectPreset('hello')">
+            <strong>📝 範例一：跟世界打招呼</strong><br>
+            10 PRINT "哈囉！小朋友！"...
+          </button>
+          <button class="demo-code-btn" id="preset-stars" onclick="BasicSimulator.selectPreset('stars')">
+            <strong>🌟 範例二：滿天小星星</strong><br>
+            10 PRINT "⭐️"...
+          </button>
+          <button class="demo-code-btn" id="preset-loop" onclick="BasicSimulator.selectPreset('loop')">
+            <strong>🏃 範例三：跑步接力賽</strong><br>
+            10 PRINT "準備起跑！"...
+          </button>
+        </div>
+
+        <div class="terminal-window">
+          <div class="terminal-header">
+            <span>📟 VINTAGE COMPUTER MONITOR</span>
+            <span>STATUS: ONLINE</span>
+          </div>
+          <div class="terminal-body" id="basic-terminal">
+            <!-- 程式輸出結果 -->
+          </div>
+        </div>
+      </div>
+
+      <div class="terminal-controls">
+        <button class="btn btn-run" onclick="BasicSimulator.run()">▶️ 執行程式</button>
+        <button class="btn btn-clear" onclick="BasicSimulator.clearTerminal()">🗑️ 清除螢幕</button>
+      </div>
+    </section>
+
+    <!-- 第四站：從 BASIC 變身 Scratch 積木 -->
+    <section class="unit-card" id="unit-scratch-bridge">
+      <span class="unit-tag">第四站</span>
+      <h2 class="unit-title">
+        🧩 從 BASIC 變身 Scratch 積木
+        <button class="speech-btn" onclick="SpeechReader.speak('你知道打字的程式是怎麼變成積木的嗎？點選下面的按鈕，看看打字的 BASIC 程式碼在右邊會變成什麼顏色的 Scratch 積木吧！', this)">📢</button>
+      </h2>
+      <p>你知道打字的程式是怎麼變成積木的嗎？點選下面的按鈕，看它們的對應關係：</p>
+
+      <div class="command-buttons" style="margin-bottom: 1rem;">
+        <button class="btn" style="background:#4c97ff; color:white;" onclick="showScratchBridge('print')">✨ 顯示文字</button>
+        <button class="btn" style="background:#ffab19; color:white;" onclick="showScratchBridge('loop')">🔁 重複迴圈</button>
+        <button class="btn" style="background:#855cd6; color:white;" onclick="showScratchBridge('robot')">🤖 指令控制</button>
+      </div>
+
+      <div class="scratch-bridge">
+        <div class="bridge-left">
+          <h4>⌨️ 以前打字的 BASIC 語言</h4>
+          <div class="code-block-display" id="bridge-basic">
+            <!-- BASIC code dynamic -->
+          </div>
+        </div>
+        <div class="bridge-right">
+          <h4>🧩 現在可愛的 Scratch 積木</h4>
+          <div class="code-block-display" style="background:#fff; border: 2px solid #e2e8f0;" id="bridge-scratch">
+            <!-- Scratch block dynamic -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 第五站：遙控小機器人 -->
+    <section class="unit-card" id="unit-robot-game">
+      <span class="unit-tag">第五站</span>
+      <h2 class="unit-title">
+        🎮 遙控小機器人！
+        <button class="speech-btn" onclick="SpeechReader.speak('最後，我們要來挑戰當工程師囉！請幫小機器人寫程式，排列「前進」、「左轉」或「右轉」指令，避開可怕的森林大樹，安全走到終點紅旗子的地方！', this)">📢</button>
+      </h2>
+      
+      <p>請利用按鈕排列你的程式，指引小機器人避開森林大樹 🌲，成功走到終點紅旗子 🏁 處！</p>
+
+      <div class="robot-game-container">
+        <!-- 5x5 地圖 -->
+        <div class="game-map-wrapper">
+          <div class="game-map" id="robot-grid">
+            <!-- Grid cells by JS -->
+          </div>
+        </div>
+
+        <!-- 遊戲操作區 -->
+        <div class="game-controls">
+          <div>
+            <strong>1. 加入動作積木：</strong>
+            <div class="command-buttons" style="margin-top: 0.5rem;">
+              <button class="btn" style="background: var(--primary); color: white;" onclick="RobotGame.addCommand('forward')">前進 ⬆️</button>
+              <button class="btn" style="background: #a78bfa; color: white;" onclick="RobotGame.addCommand('left')">左轉 ↺</button>
+              <button class="btn" style="background: #f472b6; color: white;" onclick="RobotGame.addCommand('right')">右轉 ↻</button>
+            </div>
+          </div>
+
+          <div>
+            <strong>2. 你的程式指令排程（點選 × 可刪除）：</strong>
+            <div class="command-list" id="robot-cmd-list">
+              <!-- 指令卡片 -->
+            </div>
+          </div>
+
+          <div class="game-actions">
+            <button class="btn btn-run" onclick="RobotGame.runProgram()">🚀 出發！</button>
+            <button class="btn btn-clear" onclick="RobotGame.resetGame()">↩️ 重來</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer style="text-align: center; color: #94a3b8; padding: 2rem 0; font-size: 0.9rem;">
+    © 2026 小奇的程式大冒險 🚀 啟發自 STEAM 與教育模擬器
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
