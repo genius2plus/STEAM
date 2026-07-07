@@ -10,24 +10,26 @@ const AudioPlayer = {
 
   playBeep() {
     this.init();
+    if (this.ctx.state === 'suspended') this.ctx.resume();
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
     osc.connect(gain);
     gain.connect(this.ctx.destination);
 
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(880, this.ctx.currentTime); // A5
-    gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.1);
+    osc.frequency.setValueAtTime(800, this.ctx.currentTime);
+    gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.005, this.ctx.currentTime + 0.08);
 
     osc.start();
-    osc.stop(this.ctx.currentTime + 0.1);
+    osc.stop(this.ctx.currentTime + 0.08);
   },
 
   playSuccess() {
     this.init();
+    if (this.ctx.state === 'suspended') this.ctx.resume();
     const now = this.ctx.currentTime;
-    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5 -> E5 -> G5 -> C6
     notes.forEach((freq, index) => {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
@@ -35,17 +37,18 @@ const AudioPlayer = {
       gain.connect(this.ctx.destination);
 
       osc.type = 'triangle';
-      osc.frequency.setValueAtTime(freq, now + index * 0.1);
-      gain.gain.setValueAtTime(0.15, now + index * 0.1);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + index * 0.1 + 0.2);
+      osc.frequency.setValueAtTime(freq, now + index * 0.09);
+      gain.gain.setValueAtTime(0.12, now + index * 0.09);
+      gain.gain.exponentialRampToValueAtTime(0.005, now + index * 0.09 + 0.18);
 
-      osc.start(now + index * 0.1);
-      osc.stop(now + index * 0.1 + 0.2);
+      osc.start(now + index * 0.09);
+      osc.stop(now + index * 0.09 + 0.18);
     });
   },
 
   playFail() {
     this.init();
+    if (this.ctx.state === 'suspended') this.ctx.resume();
     const now = this.ctx.currentTime;
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
@@ -53,43 +56,90 @@ const AudioPlayer = {
     gain.connect(this.ctx.destination);
 
     osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(330, now); // E4
-    osc.frequency.linearRampToValueAtTime(110, now + 0.4); // Slide down to A2
-    gain.gain.setValueAtTime(0.15, now);
-    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+    osc.frequency.setValueAtTime(260, now);
+    osc.frequency.linearRampToValueAtTime(90, now + 0.35);
+    gain.gain.setValueAtTime(0.12, now);
+    gain.gain.exponentialRampToValueAtTime(0.005, now + 0.35);
 
     osc.start();
-    osc.stop(now + 0.4);
+    osc.stop(now + 0.35);
   }
 };
 
-// Web Speech API 語音朗讀系統
+// Web Speech API 語音朗讀系統（斷句與流暢度優化）
 const SpeechReader = {
   currentUtterance: null,
   activeBtn: null,
+  speechQueue: [],
+  queueIndex: 0,
+  isPlaying: false,
 
   speak(text, button) {
-    // 如果正在播放且點擊同一個，就停止
-    if (window.speechSynthesis.speaking && this.activeBtn === button) {
-      window.speechSynthesis.cancel();
-      this.clearActive();
+    this.initVoice();
+
+    // 如果正在播放且點選同一個按鈕，則停止
+    if (this.isPlaying && this.activeBtn === button) {
+      this.stop();
       return;
     }
 
     // 停止之前的播放
-    window.speechSynthesis.cancel();
-    this.clearActive();
+    this.stop();
 
     this.activeBtn = button;
     this.activeBtn.classList.add('playing');
     this.activeBtn.textContent = '⏸️';
+    this.isPlaying = true;
 
-    this.currentUtterance = new SpeechSynthesisUtterance(text);
-    this.currentUtterance.lang = 'zh-TW';
-    this.currentUtterance.rate = 1.0;
+    // 清理與優化朗讀內容（口語化）
+    let cleanText = text
+      .replace(/v2\.0/gi, '第二版')
+      .replace(/v3\.0/gi, '第三版')
+      .replace(/PRINT/g, ' 印出 ')
+      .replace(/GOTO/g, ' 跳轉到 ')
+      .replace(/ROBOT/g, ' 機器人 ')
+      .replace(/FORWARD/g, ' 前進 ')
+      .replace(/TURN_LEFT/g, ' 左轉 ')
+      .replace(/10|20|30|40|50/g, (m) => m + '行 ')
+      .replace(/0/g, '零')
+      .replace(/1/g, '一');
+
+    // 斷句切分（逗號、句號、驚嘆號、問號、分號）
+    this.speechQueue = cleanText.split(/[，。！；？,;!?\n]+/).map(s => s.trim()).filter(s => s.length > 0);
+    this.queueIndex = 0;
+
+    this.playNextChunk();
+  },
+
+  playNextChunk() {
+    if (!this.isPlaying || this.queueIndex >= this.speechQueue.length) {
+      this.clearActive();
+      return;
+    }
+
+    const chunkText = this.speechQueue[this.queueIndex];
+    this.currentUtterance = new SpeechSynthesisUtterance(chunkText);
+    
+    // 設置台灣/中文語音
+    const voices = window.speechSynthesis.getVoices();
+    const twVoice = voices.find(v => v.lang.includes('zh-TW')) || 
+                    voices.find(v => v.lang.includes('zh-HK')) || 
+                    voices.find(v => v.lang.includes('zh-CN')) || 
+                    voices.find(v => v.lang.includes('zh'));
+    if (twVoice) {
+      this.currentUtterance.voice = twVoice;
+    }
+
+    // 優化語速（0.82 較為緩慢清楚，適合 2-3 年級）
+    this.currentUtterance.rate = 0.82;
+    this.currentUtterance.pitch = 1.05; // 稍微高亢活潑一點
 
     this.currentUtterance.onend = () => {
-      this.clearActive();
+      this.queueIndex++;
+      // 短暫停頓，使語音更流暢自然
+      setTimeout(() => {
+        this.playNextChunk();
+      }, 120);
     };
 
     this.currentUtterance.onerror = () => {
@@ -99,12 +149,104 @@ const SpeechReader = {
     window.speechSynthesis.speak(this.currentUtterance);
   },
 
+  stop() {
+    window.speechSynthesis.cancel();
+    this.clearActive();
+    this.speechQueue = [];
+    this.queueIndex = 0;
+    this.isPlaying = false;
+  },
+
   clearActive() {
     if (this.activeBtn) {
       this.activeBtn.classList.remove('playing');
       this.activeBtn.textContent = '📢';
       this.activeBtn = null;
     }
+    this.isPlaying = false;
+  },
+
+  initVoice() {
+    // 確保語音列表已加載（解決某些瀏覽器非同步加載問題）
+    if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = () => {};
+    }
+  }
+};
+
+// 簡報 (PPT) 控制核心
+const Presentation = {
+  currentSlide: 0,
+  slides: [],
+  dotsContainer: null,
+
+  init() {
+    this.slides = document.querySelectorAll('.slide');
+    this.dotsContainer = document.getElementById('ppt-dots');
+    
+    // 建立底部小圓點
+    this.dotsContainer.innerHTML = '';
+    this.slides.forEach((_, idx) => {
+      const dot = document.createElement('span');
+      dot.className = 'dot' + (idx === 0 ? ' active' : '');
+      dot.onclick = () => this.goToSlide(idx);
+      this.dotsContainer.appendChild(dot);
+    });
+
+    this.updateButtons();
+
+    // 監聽鍵盤左右鍵
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') {
+        this.nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        this.prevSlide();
+      }
+    });
+  },
+
+  updateButtons() {
+    document.getElementById('btn-prev').disabled = this.currentSlide === 0;
+    document.getElementById('btn-next').disabled = this.currentSlide === this.slides.length - 1;
+    document.getElementById('page-num').textContent = `${this.currentSlide + 1} / ${this.slides.length}`;
+    
+    // 更新小圓點
+    const dots = this.dotsContainer.querySelectorAll('.dot');
+    dots.forEach((dot, idx) => {
+      dot.className = 'dot' + (idx === this.currentSlide ? ' active' : '');
+    });
+  },
+
+  goToSlide(index, direction = 'next') {
+    if (index < 0 || index >= this.slides.length || index === this.currentSlide) return;
+    
+    // 換頁時自動中斷語音
+    SpeechReader.stop();
+    AudioPlayer.playBeep();
+
+    const oldSlide = this.slides[this.currentSlide];
+    const newSlide = this.slides[index];
+
+    oldSlide.classList.remove('active');
+    
+    // 設定滑入方向
+    if (direction === 'prev') {
+      newSlide.classList.add('slide-prev');
+    } else {
+      newSlide.classList.remove('slide-prev');
+    }
+
+    newSlide.classList.add('active');
+    this.currentSlide = index;
+    this.updateButtons();
+  },
+
+  nextSlide() {
+    this.goToSlide(this.currentSlide + 1, 'next');
+  },
+
+  prevSlide() {
+    this.goToSlide(this.currentSlide - 1, 'prev');
   }
 };
 
@@ -124,7 +266,8 @@ const BasicSimulator = {
 
   selectPreset(key) {
     document.querySelectorAll('.demo-code-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById(`preset-${key}`).classList.add('active');
+    const btn = document.getElementById(`preset-${key}`);
+    if (btn) btn.classList.add('active');
     this.currentCode = this.presets[key];
     this.clearTerminal();
     this.terminal.textContent = this.currentCode + '\n\n(點選下方「執行程式」來看看結果吧！)';
@@ -144,14 +287,12 @@ const BasicSimulator = {
 
     lines.forEach((line) => {
       setTimeout(() => {
-        // 解析簡單的 PRINT 指令
         const printMatch = line.match(/^\d+\s+PRINT\s+"([^"]+)"/);
         if (printMatch) {
           this.terminal.textContent += printMatch[1] + '\n';
         } else {
           this.terminal.textContent += line + '\n';
         }
-        // 滾動到最底
         this.terminal.scrollTop = this.terminal.scrollHeight;
       }, delay);
       delay += 300;
@@ -213,12 +354,12 @@ const RobotGame = {
     [0, 1, 1, 0, 0],
     [0, 0, 0, 1, 0],
     [1, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0] // 機器人起點在 (0, 4) 即左下角
+    [0, 0, 0, 0, 0]
   ],
   robot: {
     x: 0,
     y: 4,
-    dir: 'up' // up, right, down, left
+    dir: 'up'
   },
   commands: [],
   running: false,
@@ -256,7 +397,7 @@ const RobotGame = {
     listDiv.innerHTML = '';
     
     if (this.commands.length === 0) {
-      listDiv.innerHTML = '<span style="color: #94a3b8; font-size: 0.9rem; padding: 0.5rem;">尚未加入指令，請點選上方按鈕！</span>';
+      listDiv.innerHTML = '<span style="color: #94a3b8; font-size: 0.8rem; padding: 0.3rem;">未加入指令，請點選按鈕！</span>';
       return;
     }
 
@@ -283,18 +424,14 @@ const RobotGame = {
         const cell = document.createElement('div');
         cell.className = 'map-cell';
         
-        // 渲染地圖元素
         if (this.map[r][c] === 1) {
           cell.className += ' obstacle';
           cell.textContent = '🌲';
         } else if (this.map[r][c] === 2) {
           cell.className += ' target';
           cell.textContent = '🏁';
-        } else if (this.map[r][c] === 3) {
-          cell.textContent = '⭐️';
         }
 
-        // 渲染機器人
         if (this.robot.x === c && this.robot.y === r) {
           const rob = document.createElement('div');
           rob.className = `robot-sprite face-${this.robot.dir}`;
@@ -315,7 +452,6 @@ const RobotGame = {
       if (!this.running) break;
       const cmd = this.commands[i];
       
-      // 移動/轉向邏輯
       if (cmd === 'left') {
         const dirs = ['up', 'left', 'down', 'right'];
         const idx = dirs.indexOf(this.robot.dir);
@@ -335,10 +471,9 @@ const RobotGame = {
         else if (this.robot.dir === 'down') nextY++;
         else if (this.robot.dir === 'left') nextX--;
 
-        // 碰撞邊界與障礙物判定
         if (nextX < 0 || nextX >= 5 || nextY < 0 || nextY >= 5 || this.map[nextY][nextX] === 1) {
           AudioPlayer.playFail();
-          alert('💥 哎呀！機器人撞到牆壁或樹木了！請重新排程指令。');
+          alert('💥 哎呀！機器人撞到牆壁或樹木了！請重新排列指令！');
           this.resetGame();
           return;
         } else {
@@ -351,7 +486,6 @@ const RobotGame = {
       this.renderMap();
       await new Promise(resolve => setTimeout(resolve, 600));
 
-      // 抵達終點判定
       if (this.map[this.robot.y][this.robot.x] === 2) {
         AudioPlayer.playSuccess();
         alert('🎉 太棒了！機器人成功到達終點🏁！你真是程式小達人！');
@@ -360,15 +494,15 @@ const RobotGame = {
       }
     }
 
-    // 跑完指令卻沒到終點
     AudioPlayer.playFail();
-    alert('🤖 咦？指令執行完了，但機器人還沒走到終點旗子喔，再試試看！');
+    alert('🤖 指令執行完了，但機器人還沒走到終點喔，再試試看！');
     this.running = false;
   }
 };
 
 // 頁面初始化
 window.addEventListener('DOMContentLoaded', () => {
+  Presentation.init();
   BasicSimulator.init();
   RobotGame.init();
   showScratchBridge('print');
