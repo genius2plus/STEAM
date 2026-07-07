@@ -60,11 +60,11 @@ header p {
 
 /* 遊戲主容器 */
 .game-container {
-  max-width: 1550px;
+  max-width: 1250px;
   margin: auto;
   padding: 2rem 1rem;
   display: grid;
-  grid-template-columns: 720px 1fr;
+  grid-template-columns: 520px 1fr;
   gap: 2.5rem;
   align-items: stretch;
 }
@@ -96,31 +96,31 @@ header p {
   box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.6);
 }
 
-/* 8x8 地圖，格數適配 1080p：80px */
+/* 8x8 地圖，格數適應小螢幕：55px */
 .game-map {
   display: grid;
-  grid-template-columns: repeat(8, 80px);
-  grid-template-rows: repeat(8, 80px);
-  gap: 5px;
+  grid-template-columns: repeat(8, 55px);
+  grid-template-rows: repeat(8, 55px);
+  gap: 4px;
   background: #334155;
 }
 
 .map-cell {
   background: #1e293b;
-  border-radius: 12px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem; /* 物件尺寸適配 80px */
+  font-size: 1.8rem; /* 物件尺寸適配 55px */
   position: relative;
-  border: 2px solid #334155;
+  border: 1px solid #334155;
   transition: all 0.3s;
 }
 
 .map-cell.obstacle {
   background: #111827;
   border-color: #f72585;
-  box-shadow: 0 0 8px rgba(247, 37, 133, 0.2);
+  box-shadow: 0 0 5px rgba(247, 37, 133, 0.2);
 }
 
 .map-cell.target {
@@ -130,12 +130,12 @@ header p {
 }
 
 @keyframes pulse-glow {
-  0% { box-shadow: 0 0 5px rgba(234, 179, 8, 0.2); }
-  100% { box-shadow: 0 0 16px rgba(234, 179, 8, 0.6); }
+  0% { box-shadow: 0 0 3px rgba(234, 179, 8, 0.2); }
+  100% { box-shadow: 0 0 12px rgba(234, 179, 8, 0.6); }
 }
 
 .robot-sprite {
-  font-size: 3rem; /* 機器人尺寸適配 80px */
+  font-size: 2.2rem; /* 機器人尺寸適配 55px */
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   z-index: 10;
   display: inline-block;
