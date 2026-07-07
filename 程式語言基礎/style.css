@@ -306,8 +306,8 @@ header p {
   border: 3px dashed #334155;
   border-radius: 20px;
   padding: 1rem;
-  min-height: 120px;
-  max-height: 320px;
+  min-height: 240px;
+  max-height: 400px;
   flex-grow: 1;
   overflow-y: auto;
   display: flex;
