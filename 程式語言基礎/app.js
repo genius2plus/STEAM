@@ -148,8 +148,8 @@ const SpeechReader = {
       this.currentUtterance.voice = bestVoice;
     }
 
-    // 優化語速（0.82 較為緩慢清楚，適合 2-3 年級）
-    this.currentUtterance.rate = 0.82;
+    // 語速設置（1.0 為標準正常語速）
+    this.currentUtterance.rate = 1.0;
     this.currentUtterance.pitch = 1.05; // 稍微高亢活潑一點
 
     this.currentUtterance.onend = () => {
