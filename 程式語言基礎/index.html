@@ -36,6 +36,18 @@
     <div class="control-panel">
       <div class="section-title">🎮 程式指令控制台</div>
       
+      <!-- 難度選擇區 -->
+      <div>
+        <strong style="display: block; margin-bottom: 0.6rem; color: #cbd5e1;">🏆 選擇挑戰難度：</strong>
+        <div class="difficulty-buttons" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.4rem; margin-bottom: 0.5rem;">
+          <button class="btn btn-diff active" id="diff-iron" onclick="RobotGame.selectLevel('iron')">⚙️ 鐵</button>
+          <button class="btn btn-diff" id="diff-bronze" onclick="RobotGame.selectLevel('bronze')">🥉 銅</button>
+          <button class="btn btn-diff" id="diff-silver" onclick="RobotGame.selectLevel('silver')">🥈 銀</button>
+          <button class="btn btn-diff" id="diff-gold" onclick="RobotGame.selectLevel('gold')">🥇 金</button>
+          <button class="btn btn-diff" id="diff-diamond" onclick="RobotGame.selectLevel('diamond')">💎 鑽石</button>
+        </div>
+      </div>
+      
       <!-- 小奇語音說明 -->
       <div class="mascot-bubble">
         <span class="mascot-icon">🤖</span>

@@ -243,17 +243,79 @@ const SpeechReader = {
 
 // 機器人控制遊戲核心
 const RobotGame = {
-  // 8x8 地圖定義 (0: 空地, 1: 障礙物🌲, 2: 終點旗子🏁)
-  map: [
-    [0, 0, 0, 1, 0, 0, 0, 2],
-    [0, 1, 0, 1, 0, 1, 1, 0],
-    [0, 1, 0, 0, 0, 0, 1, 0],
-    [0, 1, 1, 1, 1, 0, 0, 0],
-    [0, 0, 0, 0, 1, 1, 1, 0],
-    [1, 1, 1, 0, 0, 0, 1, 0],
-    [0, 0, 1, 1, 1, 0, 1, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0] // 機器人起點在 (0, 7) 即左下角
-  ],
+  currentLevel: 'iron', // 預設為鐵牌
+  levels: {
+    iron: {
+      name: '⚙️ 鐵牌',
+      robot: { x: 0, y: 7, dir: 'up' },
+      map: [
+        [1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1],
+        [2, 1, 1, 1, 1, 1, 1, 1],
+        [0, 1, 1, 1, 1, 1, 1, 1],
+        [0, 1, 1, 1, 1, 1, 1, 1],
+        [0, 1, 1, 1, 1, 1, 1, 1],
+        [0, 1, 1, 1, 1, 1, 1, 1],
+        [0, 1, 1, 1, 1, 1, 1, 1]
+      ]
+    },
+    bronze: {
+      name: '🥉 銅牌',
+      robot: { x: 0, y: 7, dir: 'up' },
+      map: [
+        [1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1],
+        [0, 0, 0, 0, 2, 1, 1, 1]
+      ]
+    },
+    silver: {
+      name: '🥈 銀牌',
+      robot: { x: 0, y: 7, dir: 'up' },
+      map: [
+        [1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1],
+        [0, 0, 0, 0, 2, 1, 1, 1],
+        [0, 1, 1, 1, 1, 1, 1, 1],
+        [0, 1, 1, 1, 1, 1, 1, 1],
+        [0, 1, 1, 1, 1, 1, 1, 1]
+      ]
+    },
+    gold: {
+      name: '🥇 金牌',
+      robot: { x: 0, y: 7, dir: 'up' },
+      map: [
+        [1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 0, 0, 2, 1],
+        [1, 1, 1, 1, 0, 1, 1, 1],
+        [1, 1, 1, 1, 0, 1, 1, 1],
+        [0, 0, 0, 0, 0, 1, 1, 1],
+        [0, 1, 1, 1, 1, 1, 1, 1],
+        [0, 1, 1, 1, 1, 1, 1, 1]
+      ]
+    },
+    diamond: {
+      name: '💎 鑽石',
+      robot: { x: 0, y: 7, dir: 'up' },
+      map: [
+        [0, 0, 0, 1, 0, 0, 0, 2],
+        [0, 1, 0, 1, 0, 1, 1, 0],
+        [0, 1, 0, 0, 0, 0, 1, 0],
+        [0, 1, 1, 1, 1, 0, 0, 0],
+        [0, 0, 0, 0, 1, 1, 1, 0],
+        [1, 1, 1, 0, 0, 0, 1, 0],
+        [0, 0, 1, 1, 1, 0, 1, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0]
+      ]
+    }
+  },
   robot: {
     x: 0,
     y: 7,
@@ -263,13 +325,26 @@ const RobotGame = {
   running: false,
 
   init() {
+    this.selectLevel('iron');
+  },
+
+  selectLevel(levelKey) {
+    if (this.running) return;
+    AudioPlayer.playBeep();
+    this.currentLevel = levelKey;
+    
+    // 更新按鈕選取狀態
+    document.querySelectorAll('.btn-diff').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(`diff-${levelKey}`).classList.add('active');
+
     this.resetGame();
   },
 
   resetGame() {
-    this.robot.x = 0;
-    this.robot.y = 7;
-    this.robot.dir = 'up';
+    const lvl = this.levels[this.currentLevel];
+    this.robot.x = lvl.robot.x;
+    this.robot.y = lvl.robot.y;
+    this.robot.dir = lvl.robot.dir;
     this.commands = [];
     this.running = false;
     this.renderMap();
@@ -318,15 +393,16 @@ const RobotGame = {
     const grid = document.getElementById('robot-grid');
     grid.innerHTML = '';
     
+    const lvl = this.levels[this.currentLevel];
     for (let r = 0; r < 8; r++) {
       for (let c = 0; c < 8; c++) {
         const cell = document.createElement('div');
         cell.className = 'map-cell';
         
-        if (this.map[r][c] === 1) {
+        if (lvl.map[r][c] === 1) {
           cell.className += ' obstacle';
           cell.textContent = '🌲';
-        } else if (this.map[r][c] === 2) {
+        } else if (lvl.map[r][c] === 2) {
           cell.className += ' target';
           cell.textContent = '🏁';
         }
@@ -344,7 +420,7 @@ const RobotGame = {
   },
 
   toggleControlButtons(disabled) {
-    document.querySelectorAll('.command-buttons button, .game-actions button').forEach(btn => {
+    document.querySelectorAll('.command-buttons button, .game-actions button, .difficulty-buttons button').forEach(btn => {
       if (btn.classList.contains('btn-reset')) return; // 重來按鈕不鎖定
       btn.disabled = disabled;
     });
@@ -355,6 +431,7 @@ const RobotGame = {
     this.running = true;
     this.toggleControlButtons(true);
     
+    const lvl = this.levels[this.currentLevel];
     for (let i = 0; i < this.commands.length; i++) {
       if (!this.running) break;
       const cmd = this.commands[i];
@@ -378,7 +455,7 @@ const RobotGame = {
         else if (this.robot.dir === 'down') nextY++;
         else if (this.robot.dir === 'left') nextX--;
 
-        if (nextX < 0 || nextX >= 8 || nextY < 0 || nextY >= 8 || this.map[nextY][nextX] === 1) {
+        if (nextX < 0 || nextX >= 8 || nextY < 0 || nextY >= 8 || lvl.map[nextY][nextX] === 1) {
           AudioPlayer.playFail();
           const gridWrapper = document.querySelector('.game-map-wrapper');
           gridWrapper.style.animation = 'none';
@@ -399,9 +476,9 @@ const RobotGame = {
       this.renderMap();
       await new Promise(resolve => setTimeout(resolve, 600));
 
-      if (this.map[this.robot.y][this.robot.x] === 2) {
+      if (lvl.map[this.robot.y][this.robot.x] === 2) {
         AudioPlayer.playSuccess();
-        alert('🎉 歐耶！！機器人成功抵達終點🏁！你是超級程式設計大師！');
+        alert(`🎉 歐耶！！機器人成功挑戰 ${lvl.name} 關卡🏁！你真是太棒了！`);
         this.resetGame();
         return;
       }
